@@ -1,89 +1,116 @@
 import mysql.connector
 
+
+conn = mysql.connector.connect(host="localhost", username="root", password="", database="hotelmanagementsystem")
+curs = conn.cursor()
+
 def check_logindb(username, password):
-    x = False
-    #TODO: Check if username and password are in the database and reutrn True or False
-    if username=="USERNAME" and password=="password":
-        x = True
+    quer = "SELECT * FROM login WHERE USERNAME='{}' AND PASSWORD='{}'".format(str(username), str(password))
+    curs.execute(quer)
+    result = curs.fetchall()
+    x = result!=[]
     return x
 
 def getEmptyRooms():
-    #TODO: return number of rooms empty
-    n = 10
+    quer = "SELECT * FROM roomsavail WHERE booked=False"
+    curs.execute(quer)
+    result = curs.fetchall()
+    n = len(result)
     return n
 
 def getBookRooms():
-    n = 12
-    #TODO: return number of rooms empty
+    quer = "SELECT * FROM roomsavail WHERE booked=True"
+    curs.execute(quer)
+    result = curs.fetchall()
+    n = len(result)
     return n
 
 def getAmenitiesBooked() -> int:
-    #TODO: return total number of amenities booked 
-    n = 14
+    n = len(getAmenitiesReservation())
     return n
 
 def getTablesBooked() -> int:
-    #TODO: retun total number of tables booked
-    n = 16
+    n = len(getResturantReservation())
     return n
 
 def returnBkRByType():
-    #TODO: Return number of room booked by type
-    x = {"D": 5, "E": 15}
+    quer = "SELECT Type, count(Type) FROM roomsavail WHERE Booked=1 Group By Type"
+    curs.execute(quer)
+    result = curs.fetchall()
+    x={}
+    for i in result:
+        x[i[0]] = i[1]
     return x
 
 def makeRoomReservation(Name, noGuest, rType, cinDate, cOutDate, bDate):
-    #TODO: Insert all data into "reservation" after assigning an empty rooms and update the room as books in "rooms"
-    print("Name:{} Guests:{} rType: {} cinDate: {} cOutDate: {}, bdate: {}".format(Name, noGuest, rType, cinDate, cOutDate, bDate))
-    
+    d = "SELECT Number FROM roomsavail WHERE Booked=0 AND Type='{}'".format(rType)
+    curs.execute(d)
+    result = curs.fetchall()
+    quer = "INSERT INTO rooms VALUES {}".format(((Name, noGuest, rType, result[0][0], cinDate, cOutDate, bDate)))
+    quer2 = f"UPDATE roomsavail SET Booked = 1 WHERE Number='{result[0][0]}'"
+    curs.execute(quer)
+    conn.commit() 
+    curs.execute(quer2)
+    conn.commit() 
 
 def getRoomReservation():
-    x = (("A", 3, '2020-12-22', "2021-01-2", "A", "A01"), ("B", 4, '2020-12-22', "2021-01-2", "A", "A02"))
-    #TODO: Returns Name, Number of guest, CheckInDate, CheckOutDate, RoomType, RoomNo from "reservation"
-    return x
+    quer = "SELECT Name, guests, cindate, cout, rType, rnumber FROM rooms";
+    curs.execute(quer)
+    result = curs.fetchall()
+    return result
 
 def updateReservation(data, name):
-    #TODO: Update reservation and set the data where Name=name in "reservation"
-    x = 0
+    quer = f"UPDATE rooms SET guests={data[1]}, cindate='{data[2]}', cout='{data[3]}', rType='{data[4]}', rnumber='{data[5]}' WHERE name='{name}'"
+    curs.execute(quer)
+    conn.commit()
 
-def deleteReservation(name):
-    #TODO: delete reservation with the given name
-    x = 0
+def deleteReservation(data):
+    quer = f"DELETE FROM rooms WHERE name='{data[0]}' AND guests={data[1]} AND cindate='{data[2]}' AND cout='{data[3]}' AND rType='{data[4]}' AND rnumber='{data[5]}'"
+    curs.execute(quer)
+    quer2 = f"UPDATE roomsavail SET Booked =0 WHERE Number='{data[5]}'"
+    curs.execute(quer2)
+    conn.commit()
 
 def insertResturantResrvation(name, noGuest, date):
-    #TODO: insert reservation into table "resturant"
-    print("Name: {}, noGuest: {}, date: {}".format(name, noGuest, date))
+    quer = "INSERT INTO resturant VALUES {}".format((name, noGuest, date))
+    curs.execute(quer)
+    conn.commit()
 
 def getResturantReservation():
-    x = (("A", 4, "2022-12-23"), ("B", 5, "2022-12-24"))
-    #TODO: returns name, number of guests and date from "resturant"
+    quer = "SELECT * FROM resturant"
+    curs.execute(quer)
+    x = curs.fetchall()
     return x
 
 def deleteResturant(name, date):
-    #TODO: delete resturant reservation with the given name and date from "resturant"
-    print("Delete Resturant Reservation with name {} on {}".format(name, date))
-    x = 0
+    quer = "DELETE FROM resturant WHERE name='{}' AND date='{}'".format(name, date)
+    curs.execute(quer)
+    conn.commit()
 
 def insertAmenitiesRequest(name, noGuests, date, type):
-    #TODO: Insert amenities request into "amenities"
-    print("name: {}, noGuest: {}, date: {}, type:{}".format(name, noGuests, date, type))
-    x= 0 
+    quer = "INSERT INTO amenities VALUES {}".format((name, noGuests, date, type))
+    curs.execute(quer) 
 
 def getAmenitiesReservation():
-    x = (("A", 4, "2022-12-13", "Gym"), ("B", 2, "2023-11-13", "Swimming"))
-    #TODO: returns name, number of guest, date and type from "Amenities"
+    quer = "SELECT * FROM amenities"
+    curs.execute(quer)
+    x = curs.fetchall()
     return x
 
 def deleteAmenitiesReservation(name, date, type):
-    print("Deleted {} request with name:{} on {}".format(type, name, date))
+    quer = f"DELETE from amenities WHERE name='{name}' and date='{date}' and type='{type}'"
+    curs.execute(quer)
 
 def getDetailedReservation(name):
-
-    y = (("A", 3, '2020-12-22', "2021-01-2", "A", "A01"), ("B", 4, '2020-12-22', "2021-01-2", "A", "A02"))
+    x = tuple()
+    y = getRoomReservation()
     for i in y:
-        if i[0]==name:
+        if i[0] == name:
             x = i
+
     return x
 
 def updateRReservation(name, data):
-    print("UPDATED RReservation with name {} set values {}".format(name, data))
+    quer = f"UPDATE resturant set noGuest={data[1]}, date='{data[2]}' WHERE name = '{name}'"
+    curs.execute(quer)
+    conn.commit()

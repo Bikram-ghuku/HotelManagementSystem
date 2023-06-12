@@ -29,7 +29,7 @@ def dashBoard(parent):
     entry_bg_1 = canvas.create_image(128.5,153.5,image=entry_image_1)
     entry_1 = Entry(bd=0,bg="#D9D9D9",highlightthickness=0, font=("Saira Condensed Bold", 40 * -1))
     entry_1.place(x=73.0,y=103.0,width=111.0,height=99.0)
-    entry_1.insert(0, manager.getEmptyRooms())
+    entry_1.insert(0, manager.getBookRooms())
     entry_1.config(state="disabled",disabledbackground="#D9D9D9")
 
     global entry_image_2
@@ -55,7 +55,7 @@ def dashBoard(parent):
     entry_bg_5 = canvas.create_image(335.5,153.5,image=entry_image_5)
     entry_5 = Entry(bd=0,bg="#D9D9D9",highlightthickness=0, font=("Saira Condensed Bold", 40 * -1))
     entry_5.place(x=280.0,y=103.0,width=111.0,height=99.0)
-    entry_5.insert(0, manager.getBookRooms())
+    entry_5.insert(0, manager.getEmptyRooms())
     entry_5.config(state="disabled",disabledbackground="#D9D9D9")
 
     global entry_image_6
@@ -100,14 +100,17 @@ def dashBoard(parent):
     canva_rbk.draw()
     canva_rbk.get_tk_widget().place(x = 70, y=285)
 
+    colors = ["#1AA2EC", "#8a8a8a", "#797EF6", "#a4a4a4"]
     # Rooms booked by type graph
     fig_rbt = Figure(figsize=(2.4, 1.6), dpi=100)
     fig_rbt.set_facecolor("#D9D9D9")
     plt_rbt = fig_rbt.add_subplot(111)
-    plt_rbt.pie(list(manager.returnBkRByType().values()),
-        [0.05, 0.05],
+    x_data = list(manager.returnBkRByType().values())
+    x = [(i+1)*0.05 for i in range(len(x_data))]
+    plt_rbt.pie(x_data,
+        explode=x,
         startangle=-30,
-        colors=("#1AA2EC", "#8a8a8a")
+        colors=colors[:len(x_data)]
     )
     plt_rbt.legend(list(manager.returnBkRByType().keys()), loc="upper left", fontsize = "7")
     canva_rbt = FigureCanvasTkAgg(fig_rbt, parent)

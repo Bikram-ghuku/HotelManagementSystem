@@ -23,7 +23,7 @@ def handle_checkOut():
     deleteReservation(item[0])
 
 def handle_delete():
-    deleteReservation(item[0])
+    deleteReservation(item)
 
 def handle_modify(parent, username):
     

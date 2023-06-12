@@ -41,7 +41,6 @@ def handle_btn_clk(target, window, username, cname=None):
         sidebar_navigator.place(x=1193, y=422)
     elif target=="mRR":
         current_window = modifyResturantReservation(window, cname)
-        sidebar_navigator.place(x=1193, y=376)
     elif target=="vRR":
         current_window = viewResturantReservation(window, username)
         sidebar_navigator.place(x=1193, y=326)
@@ -53,7 +52,6 @@ def handle_btn_clk(target, window, username, cname=None):
         sidebar_navigator.place(x=1193, y=176)
     elif target=="mR":
         current_window = modifyReservation(window, cname)
-        sidebar_navigator.place(x=1193, y=276)
     elif target=="vR":
         current_window = viewReservation(window, username)
         sidebar_navigator.place(x=1193, y=226)

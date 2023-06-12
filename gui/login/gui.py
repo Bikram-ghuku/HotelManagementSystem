@@ -1,4 +1,4 @@
-import imp
+
 from sql import manager
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
